@@ -37,10 +37,6 @@ def main():
 
     while True:
         main_event, main_values_input = window.read()
-        for item in hist:
-            print(item)
-            hist_string = hist_string + str(item)
-        window["input"].update(hist_string)
 
         if main_event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT or main_event == "Cancel":
             break
@@ -48,10 +44,15 @@ def main():
         print(main_event)
         if main_event in allowed_characters:
             print("cock")
+            print(hist)
+            print("cock", hist_string)
             try:
                 print(hist)
                 if main_event == "Backspace":
-                    pass
+                    if len(hist) != 0:
+                        print(hist)
+                        print("how", hist_string)
+                        hist.remove([-1])
                 elif main_event in operators and last_input_not_operator():
                     print("hehe" + main_event)
                     hist.append(main_event)
@@ -60,6 +61,16 @@ def main():
                     hist.append(int(main_event))
                     window.refresh()
                 print(hist)
+
+                # for item in hist:
+                # print("item", item)
+                # hist_string = ""
+                print(len(hist))
+                hist_string = hist_string + (" " if hist[-1] != "(" or ")" else "") + str(hist[-1])
+                print(hist_string)
+                # if hist_string[0] == " ":
+                #     hist_string = hist_string[:-1]
+                window["input"].update(hist_string)
             except ValueError as e:
                 sg.PopupError(e)
 
