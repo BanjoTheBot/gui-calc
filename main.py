@@ -8,13 +8,12 @@ numbers = ["7", "8", "9", "(", "4", "5", "6", "1", "2", "3", "0"]
 operators = ["+", "-", "*", "/"]
 allowed_characters = numbers + operators
 allowed_characters.append("=")
+allowed_characters.append("Backspace")
 
 
 def last_input_not_operator():
     try:
-        print(len(hist))
         if len(hist) != 0:
-            print("haha")
             if hist[-1] not in operators:
                 return True
     except IndexError:
@@ -24,16 +23,24 @@ def last_input_not_operator():
 def main():
     global hist, hist_string, numbers, operators, allowed_characters
     layout = [
-        [sg.Text(hist_string, key="input")],
-        [sg.Button("+"), sg.Button("-"), sg.Button("*"), sg.Button("/")],
-        [sg.Button("7"), sg.Button("8"), sg.Button("9"), sg.Button("(")],
-        [sg.Button("4"), sg.Button("5"), sg.Button("6"), sg.Button(")")],
-        [sg.Button("1"), sg.Button("2"), sg.Button("3"), sg.Button("=")],
-        [sg.Button("0"), sg.Button("Backspace")],
+        [sg.Text(hist_string, key="input", size=(30, 2), font=('Helvetica', 15))],
+        [sg.Button("+", size=(8, 3), font=('Helvetica', 15)), sg.Button("-", size=(8, 3), font=('Helvetica', 15)),
+         sg.Button("*", size=(8, 3), font=('Helvetica', 15)), sg.Button("/", size=(8, 3), font=('Helvetica', 15))],
+        [sg.Button("7", size=(8, 3), font=('Helvetica', 15)), sg.Button("8", size=(8, 3), font=('Helvetica', 15)),
+         sg.Button("9", size=(8, 3), font=('Helvetica', 15)), sg.Button("(", size=(8, 3), font=('Helvetica', 15))],
+        [sg.Button("4", size=(8, 3), font=('Helvetica', 15)), sg.Button("5", size=(8, 3), font=('Helvetica', 15)),
+         sg.Button("6", size=(8, 3), font=('Helvetica', 15)), sg.Button(")", size=(8, 3), font=('Helvetica', 15))],
+        [sg.Button("1", size=(8, 3), font=('Helvetica', 15)), sg.Button("2", size=(8, 3), font=('Helvetica', 15)),
+         sg.Button("3", size=(8, 3), font=('Helvetica', 15)), sg.Button("=", size=(8, 3), font=('Helvetica', 15))],
+        [sg.Button("0", size=(8, 3), font=('Helvetica', 15)),
+         sg.Button("Backspace", size=(20, 3), font=('Helvetica', 15))]
+
     ]
 
+    sg.SetOptions(element_padding=(10, 10))
+
     sg.theme(random.choice(sg.theme_list()))
-    window = sg.Window("Calculator", layout, size=(800, 600), enable_close_attempted_event=True)
+    window = sg.Window("Calculator", layout, size=(800, 600), finalize=True, enable_close_attempted_event=True)
 
     while True:
         main_event, main_values_input = window.read()
@@ -43,18 +50,25 @@ def main():
 
         print(main_event)
         if main_event in allowed_characters:
-            print("cock")
-            print(hist)
-            print("cock", hist_string)
             try:
                 print(hist)
+                if main_event == "=":
+                    hist_string = " ".join(hist_string)
+                    equation = ""
+                    for item in hist:
+                        equation = equation + str(item)
+                    print("equation", eval(equation))
+
+                    # try:
+                # except ValueError:
+                #     sg.popup_error("boywhatdahellboy")
+
+                # print(main_event)
                 if main_event == "Backspace":
+                    print("cock")
                     if len(hist) != 0:
-                        print(hist)
-                        print("how", hist_string)
-                        hist.remove([-1])
+                        del hist[-1]
                 elif main_event in operators and last_input_not_operator():
-                    print("hehe" + main_event)
                     hist.append(main_event)
                 else:
                     print(int(main_event))
@@ -62,18 +76,14 @@ def main():
                     window.refresh()
                 print(hist)
 
-                # for item in hist:
-                # print("item", item)
-                # hist_string = ""
-                print(len(hist))
-                hist_string = hist_string + (" " if hist[-1] != "(" or ")" else "") + str(hist[-1])
-                print(hist_string)
-                # if hist_string[0] == " ":
-                #     hist_string = hist_string[:-1]
+                hist_string = ""
+                for item in hist:
+                    print("this is hist", hist)
+                    hist_string = hist_string + (" " if hist[-1] != "(" or ")" else "") + str(item)
                 window["input"].update(hist_string)
-            except ValueError as e:
-                sg.PopupError(e)
-
+            except ValueError:
+                # sg.PopupError(e)
+                pass
 
 if __name__ == '__main__':
     main()
